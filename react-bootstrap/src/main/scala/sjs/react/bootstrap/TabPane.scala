@@ -20,8 +20,10 @@ object TabPane /* mixins: */ {
     def stopAnimateOut() {
       if (t.isMounted()) {
         t.setState(State(animateOut = false))
-        if (t.props.onAnimateOutEnd != null) {
-          t.props.onAnimateOutEnd()
+       val props = t.props.runNow()
+
+        if (props.onAnimateOutEnd != null) {
+          props.onAnimateOutEnd()
         }
       }
     }
@@ -30,17 +32,21 @@ object TabPane /* mixins: */ {
   val TabPane = ReactComponentB[Props]("TabPane")
     .initialState(State())
     .backend(new Backend(_))
-    .render((P, C, S, B) => {
+    .renderPCS((scope, P, C, S) => {
+      val B = scope.backend
     val classes = Map("tab-pane" -> true, "fade" -> true, "active" -> (P.active || S.animateOut), "in" -> (P.active && !S.animateIn))
     <.div(^.classSet1M(P.className, classes), C)
   }
-    ).componentWillReceiveProps({
-    (scope, nextProps) =>
-      if (scope.props.animation) {
-        if (!scope.state.animateIn && nextProps.active && !scope.props.active) {
-          scope.setState(State(animateIn = true))
-        } else if (!scope.state.animateOut && !nextProps.active && scope.props.active) {
-          scope.setState(State(animateOut = true))
+    ).componentWillReceiveProps(args => CallbackTo[Unit] {
+      val props = args.currentProps
+      val nextProps = args.nextProps
+      val state = args.currentState
+      
+      if (props.animation) {
+        if (!state.animateIn && nextProps.active && !props.active) {
+          args.component.setState(State(animateIn = true))
+        } else if (!state.animateOut && !nextProps.active && props.active) {
+          args.component.setState(State(animateOut = true))
         }
 
       }

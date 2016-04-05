@@ -13,10 +13,11 @@ object ListGroupItem /* mixins: BootstrapMixin*/ {
   case class State()
 
   class Backend(t: BackendScope[Props, State]) {
-    def handleClick(event: ReactEvent) {
-      if (t.props.onClick != null) {
+    def handleClick(event: ReactEvent) = CallbackTo[Unit] {
+      var props = t.props.runNow()
+      if (props.onClick != null) {
         event.preventDefault()
-        t.props.onClick(t.props.eventKey, t.props.href, t.props.target)
+        props.onClick(props.eventKey, props.href, props.target)
       }
     }
   }
@@ -24,9 +25,9 @@ object ListGroupItem /* mixins: BootstrapMixin*/ {
   val component = ReactComponentB[Props]("ListGroupItem")
     .initialState(State())
     .backend(new Backend(_))
-    .render(
-      (P, C, S, B) => {
-
+    .renderPCS(
+      (scope, P, C, S) => {
+        var B = scope.backend 
         def renderStructuredContent:Seq[TagMod] = {
           val content = <.p(^.className := "list-group-item-text", C)
           if (React.isValidElement(P.header)) {

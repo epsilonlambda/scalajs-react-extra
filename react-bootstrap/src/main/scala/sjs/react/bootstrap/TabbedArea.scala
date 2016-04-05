@@ -20,13 +20,15 @@ object TabbedArea /* mixins: BootstrapMixin*/ {
       t.setState(State(previousActiveKey = null))
     }
 
-    def handleSelect(key: Any) {
-      def getActiveKey = if (t.props.activeKey != null) t.props.activeKey else t.state.activeKey
+    def handleSelect(key: Any) = CallbackTo[Unit] {
+      val props = t.props.runNow()
+
+      def getActiveKey = if (props.activeKey != null) props.activeKey else t.state.runNow().activeKey
 
 
-      if (t.props.onSelect != null) {
+      if (props.onSelect != null) {
         this.isChanging = true
-        t.props.onSelect(key)
+        props.onSelect(key)
         this.isChanging = false
       } else if (key != getActiveKey) {
         t.modState(s => s.copy(activeKey = key, previousActiveKey = getActiveKey))
@@ -47,13 +49,14 @@ object TabbedArea /* mixins: BootstrapMixin*/ {
   //  }
 
   val component = ReactComponentB[Props]("TabbedArea")
-    .initialStateP(P => {
+    .initialState_P(P => {
     //TODO
     val defaultActiveKey = if (P.defaultActiveKey != null) P.defaultActiveKey else null /*getDefaultActiveKeyFromChildren(C)*/
     State(activeKey = defaultActiveKey, previousActiveKey = null)
   })
     .backend(new Backend(_))
-    .render((P, C, S, B) => {
+    .renderPCS((scope, P, C, S) => {
+      val B = scope.backend
     val activeKey: js.Any = if (P.activeKey != null) P.activeKey else S.activeKey.asInstanceOf[js.Any]
 
 
@@ -94,15 +97,16 @@ object TabbedArea /* mixins: BootstrapMixin*/ {
       ValidComponentChildren.map(C, renderTabIfSet))
     <.div(nav, <.div(/*^.id := P.id,*/ ^.className := "tab-content", ^.ref := "panes", ValidComponentChildren.map(C, renderPane)))
   }
-    ).componentWillReceiveProps({
-    (scope, nextProps) =>
-      if (nextProps.activeKey != null && nextProps.activeKey != scope.props.activeKey) {
-        scope.setState(State(previousActiveKey = scope.props.activeKey))
+    ).componentWillReceiveProps( args => CallbackTo[Unit] {
+      val nextProps = args.nextProps
+      val props=  args.currentProps
+      if (nextProps.activeKey != null && nextProps.activeKey != props.activeKey) {
+        args.component.setState(State(previousActiveKey = props.activeKey))
       }
 
-  }).shouldComponentUpdate({
-    (scope, P, S) =>
-      !scope.backend.isChanging
+  }).shouldComponentUpdate( args => {
+    
+      !args.component.backend.isChanging
   })
     .build
 

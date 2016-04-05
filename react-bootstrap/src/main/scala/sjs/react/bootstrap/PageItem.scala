@@ -12,13 +12,15 @@ object PageItem /* mixins: */ {
   case class State()
 
   class Backend(t: BackendScope[Props, State]) {
-    def handleSelect(event: ReactEventI): Unit = {
-      if (t.props.onSelect!=null)
+    def handleSelect(event: ReactEventI) = CallbackTo[Unit] {
+      val props = t.props.runNow()
+
+      if (props.onSelect!=null)
       {
         event.preventDefault()
-        if (!t.props.disabled)
+        if (!props.disabled)
         {
-          t.props.onSelect(t.props.eventKey, t.props.href, t.props.target)
+          props.onSelect(props.eventKey, props.href, props.target)
         }
       }
     }
@@ -27,7 +29,8 @@ object PageItem /* mixins: */ {
   val component = ReactComponentB[Props]("PageItem")
     .initialState(State())
     .backend(new Backend(_))
-    .render((P, C, S, B) => {
+    .renderPCS((scope, P, C, S) => {
+      val B = scope.backend
     val classes = Map("disabled" -> P.disabled, "previous" -> P.previous, "next" -> P.next)
 
     <.li(^.classSet1M(P.className, classes),

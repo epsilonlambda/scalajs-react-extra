@@ -12,8 +12,8 @@ object Badge /* mixins: */ {
 
 
   val component = ReactComponentB[Props]("Badge")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (scope, P, C) => {
 
         def hasContent: Boolean =
           (ValidComponentChildren.hasValidComponent(C) /*|| C.isInstanceOf[String]*/ || C.isInstanceOf[Double])

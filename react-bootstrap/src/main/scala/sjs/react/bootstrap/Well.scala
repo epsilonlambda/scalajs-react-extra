@@ -10,8 +10,8 @@ import japgolly.scalajs.react.vdom.prefix_<^._
 object Well {
 
   val component = ReactComponentB[Props]("Well")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (_, P, C) => {
         val classes = P.getBsClassSet
         <.div(^.classSet1(P.className, classes.toList: _*), C)
       }

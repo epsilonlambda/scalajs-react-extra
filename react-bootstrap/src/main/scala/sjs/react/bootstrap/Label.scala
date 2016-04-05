@@ -10,8 +10,8 @@ import japgolly.scalajs.react.vdom.prefix_<^._
 object Label {
 
   val component = ReactComponentB[Props]("Label")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (_, P, C) => {
         val classes = P.getBsClassSet
         <.span(^.classSet1M(P.className, classes), C)
       }

@@ -12,10 +12,11 @@ object MenuItem /* mixins: */ {
   case class State()
 
   class Backend(t: BackendScope[Props, State]) {
-    def handleClick(event: ReactEvent): Unit = {
-      if (t.props.onSelect != null) {
+    def handleClick(event: ReactEvent) = CallbackTo[Unit] {
+      var props = t.props.runNow()
+      if (props.onSelect != null) {
         event.preventDefault()
-        t.props.onSelect(t.props.eventKey, t.props.href, t.props.target)
+        props.onSelect(props.eventKey, props.href, props.target)
       }
     }
 
@@ -24,8 +25,9 @@ object MenuItem /* mixins: */ {
   val component = ReactComponentB[Props]("MenuItem")
     .initialState(State())
     .backend(new Backend(_))
-    .render((P, C, S, B) => {
-    val classes = Map("dropdown-header" -> P.header, "divider" -> P.divider)
+    .renderPCS((scope, P, C, S) => {
+      val B = scope.backend
+      val classes = Map("dropdown-header" -> P.header, "divider" -> P.divider)
     var children:TagMod = null
     if (P.header) {
       children = C

@@ -13,11 +13,13 @@ object NavItem /* mixins: BootstrapMixin*/ {
   case class State()
 
   class Backend(t: BackendScope[Props, State]) {
-    def handleClick(event: ReactEvent): Unit = {
-      if (t.props.onSelect != null) {
+    def handleClick(event: ReactEvent) = CallbackTo[Unit] {
+      val props = t.props.runNow()
+
+      if (props.onSelect != null) {
         event.preventDefault()
-        if (!t.props.disabled) {
-          t.props.onSelect(t.props.eventKey, t.props.href, t.props.target)
+        if (!props.disabled) {
+          props.onSelect(props.eventKey, props.href, props.target)
         }
       }
     }
@@ -27,8 +29,9 @@ object NavItem /* mixins: BootstrapMixin*/ {
   val component = ReactComponentB[Props]("NavItem")
     .initialState(State())
     .backend(new Backend(_))
-    .render(
-      (P, C, S, B) => {
+    .renderPCS(
+      (scope, P, C, S) => {
+        val B = scope.backend
         val classes = Map(
           "active" -> P.active,
           "disabled" -> P.disabled

@@ -40,8 +40,8 @@ object ProgressBar /* mixins: BootstrapMixin*/ {
   val component = ReactComponentB[Props]("ProgressBar")
     .initialState(State())
     .backend(new Backend(_))
-    .render(
-      (P, C, S, B) => {
+    .renderPCS(
+      (_, P, C, S) => {
 
         def renderProgressBar: ReactElement = {
           val percentage = getPercentage(P.now, P.min, P.max)
@@ -56,8 +56,10 @@ object ProgressBar /* mixins: BootstrapMixin*/ {
           if (P.srOnly) {
             renderScreenReaderOnlyLabel(label)
           }
+          
+   
           var classes = P.getBsClassSet
-          <.div(^.classSet1M(P.className, classes), ^.role := "progressbar", ^.style := s"width:$percentage%",
+          <.div(^.classSet1M(P.className, classes), ^.role := "progressbar", ^.width := s"$percentage%",
             ^.aria.valuenow := P.now, ^.aria.valuemin := P.min, ^.aria.valuemax := P.max, label)
         }
 

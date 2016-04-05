@@ -62,10 +62,12 @@ object Navbar /* mixins: BootstrapMixin*/ {
   class Backend(t: BackendScope[Props, State]) {
     var isChanging = true
 
-    def handleToggle(event: ReactEvent): Unit = {
-      if (t.props.onToggle != null) {
+    def handleToggle(event: ReactEvent) = CallbackTo[Unit] {
+      val props = t.props.runNow()
+
+      if (props.onToggle != null) {
         isChanging = true
-        t.props.onToggle(event)
+        props.onToggle(event)
         isChanging = false
       }
       t.modState(s => s.copy(navExpanded = !s.navExpanded))
@@ -73,11 +75,11 @@ object Navbar /* mixins: BootstrapMixin*/ {
   }
 
   val component = ReactComponentB[Props]("Navbar")
-    .initialStateP(P => State(P.defaultNavExpanded))
+    .initialState_P(P => State(P.defaultNavExpanded))
     .backend(new Backend(_))
-    .render(
-      (P, S, B) => {
-
+    .renderPS(
+      (scope, P, S) => {
+        val B = scope.backend
         implicit val idGenerator = new IDGenerator(P.id)
 
         def isNavExpanded: Boolean = if (P.navExpanded.isDefined) P.navExpanded.get else S.navExpanded

@@ -10,7 +10,7 @@ import japgolly.scalajs.react.vdom.prefix_<^._
 object Tooltip {
 
   val component = ReactComponentB[Props]("Tooltip")
-    .render((P, C) => {
+    .renderPC((_, P, C) => {
     val classes = Map(
       "tooltip" -> true,
       P.placement -> true,

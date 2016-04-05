@@ -10,8 +10,8 @@ object Accordion {
 
 
   val component = ReactComponentB[Unit]("Accordion")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (scope, P, C) => {
         PanelGroup(accordion = true)(C)
       }
     )

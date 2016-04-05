@@ -10,8 +10,8 @@ import japgolly.scalajs.react.vdom.prefix_<^._
 object Row /* mixins: */ {
 
   val component = ReactComponentB[Props]("Row")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (_, P, C) => {
         <.div(^.className := P.className, ^.className := "row", C)
       }
     )

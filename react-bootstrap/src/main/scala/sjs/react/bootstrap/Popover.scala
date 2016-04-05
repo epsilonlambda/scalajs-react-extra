@@ -11,8 +11,8 @@ object Popover /* mixins: BootstrapMixin*/ {
 
 
   val component = ReactComponentB[Props]("Popover")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (_, P, C) => {
         def renderTitle = <.h3(^.className := "popover-title", P.title)
 
 

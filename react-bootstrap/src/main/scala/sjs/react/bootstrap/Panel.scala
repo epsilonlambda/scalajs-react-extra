@@ -31,10 +31,12 @@ object Panel /* mixins: BootstrapMixin with CollapsableMixin*/ {
       t.refs.asInstanceOf[js.Dynamic].panel.getDOMNode()
     }
 
-    def handleSelect(event: ReactEvent) {
-      if (t.props.onSelect != null) {
+    def handleSelect(event: ReactEvent) = CallbackTo[Unit] {
+      val props = t.props.runNow()
+
+      if (props.onSelect != null) {
         this._isChanging = true
-        t.props.onSelect(t.props.eventKey)
+        props.onSelect(props.eventKey)
         this._isChanging = false
       }
       event.preventDefault()
@@ -70,11 +72,11 @@ object Panel /* mixins: BootstrapMixin with CollapsableMixin*/ {
   }
 
   val component = ReactComponentB[Props]("Panel")
-    .initialStateP(P => State(collapsing = false, expanded = P.defaultExpanded))
+    .initialState_P(P => State(collapsing = false, expanded = P.defaultExpanded))
     .backend(new Backend(_))
-    .render(
-      (P, C, S, B) => {
-
+    .renderPCS(
+      (scope, P, C, S) => {
+        val B = scope.backend
         def isExpanded: Boolean = {
           if (P.expanded)
             P.expanded
@@ -192,19 +194,24 @@ object Panel /* mixins: BootstrapMixin with CollapsableMixin*/ {
           renderHeading(), if (P.collapsable) renderCollapsableBody() else renderBody(),
           renderFooter())
       }
-    ).componentWillReceiveProps((scope, newProps) => {
-    if (scope.props.collapsable && newProps.expanded != scope.props.expanded) {
-      scope.backend._collapseEnd = false
-      scope.setState(State(collapsing = true))
+    ).componentWillReceiveProps((args) => CallbackTo[Unit] {
+      val props = args.currentProps
+      val newProps = args.nextProps
+      val backend = args.component.backend
+      
+    if (props.collapsable && newProps.expanded != props.expanded) {
+      backend._collapseEnd = false
+      args.component.setState(State(collapsing = true))
+      
     }
 
   })
     .shouldComponentUpdate(
-      (scope, P, S) =>
-        !scope.backend._isChanging
-    ).componentDidMount(scope => {
-
-  })
+       args => {
+        val backend = args.component.backend
+        !backend._isChanging
+       }
+    )
     .build
 
   case class Props(id: String = "", collapsable: Boolean = false, className: String = "",

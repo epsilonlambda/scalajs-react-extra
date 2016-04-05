@@ -10,7 +10,7 @@ object ButtonGroup /* mixins: BootstrapMixin*/ {
 
 
   val component = ReactComponentB[Props]("ButtonGroup")
-    .render((P, C) => {
+    .renderPC((scope, P, C) => {
     var classes = P.getBsClassSet
     classes += ("btn-group" -> !P.vertical)
     classes += ("btn-group-vertical" -> P.vertical)

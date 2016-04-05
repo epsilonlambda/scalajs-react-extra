@@ -13,8 +13,8 @@ object DropdownMenu /* mixins: */ {
 
 
   val component = ReactComponentB[Props]("DropdownMenu")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (_, P, C) => {
         def renderMenuItem(child: ReactNode, index: Int): ReactElement = {
           val key = if (child.hasOwnProperty("key")) child.asInstanceOf[js.Dynamic].key else index
           val props: Map[String, Any] = Map(

@@ -12,24 +12,28 @@ object SplitButton /* mixins: BootstrapMixin with DropdownStateMixin*/ {
   case class State(open: Boolean = false)
 
   class Backend(t: BackendScope[Props, State]) {
-    def handleDropdownClick(event: ReactEvent): Unit = {
+    def handleDropdownClick(event: ReactEvent) = CallbackTo[Unit] {
       event.preventDefault()
       //      this.setDropdownState(!this.state.open)
       t.modState(s => s.copy(open = !s.open))
     }
 
-    def handleButtonClick(event: ReactEvent): Unit = {
-      if (t.state.open) {
+    def handleButtonClick(event: ReactEvent) = CallbackTo[Unit] {
+      val state = t.state.runNow()
+      val props = t.props.runNow()
+      if (state.open) {
         t.modState(s => s.copy(open = !s.open))
       }
-      if (t.props.onClick != null) {
-        t.props.onClick(event, t.props.href, t.props.target)
+      if (props.onClick != null) {
+        props.onClick(event, props.href, props.target)
       }
     }
 
-    def handleOptionSelect(event: ReactEvent): Unit = {
-      if (t.props.onSelect != null) {
-        t.props.onSelect(event)
+    def handleOptionSelect(event: ReactEvent) = CallbackTo[Unit] {
+      val props = t.props.runNow()
+
+      if (props.onSelect != null) {
+        props.onSelect(event)
       }
       t.modState(s => s.copy(open = false))
     }
@@ -38,8 +42,9 @@ object SplitButton /* mixins: BootstrapMixin with DropdownStateMixin*/ {
   val component = ReactComponentB[Props]("SplitButton")
     .initialState(State())
     .backend(new Backend(_))
-    .render((P, C, S, B) => {
-    val groupClasses = Map("open" -> S.open, "dropup" -> P.dropup)
+    .renderPCS((scope, P, C, S) => {
+    val B = scope.backend
+      val groupClasses = Map("open" -> S.open, "dropup" -> P.dropup)
     val button = Button(ref = "button", onClick = B.handleDropdownClick, title = "" /*, id= null*/)(P.title)
     val dropdownButton = Button(ref = "dropdownButton", className = BootStrapFunctionUtils.joinClasses(P.className, "dropdown-toggle"),
       onClick = B.handleDropdownClick)(<.span(^.className := "sr-only", P.dropdownTitle),

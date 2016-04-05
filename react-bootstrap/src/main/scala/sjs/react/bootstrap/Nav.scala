@@ -33,9 +33,10 @@ object Nav /* mixins: BootstrapMixin with CollapsableMixin*/ {
     }
 
     def handleSelect(event: ReactEvent) {
-      if (t.props.onSelect != null) {
+      val props = t.props.runNow()
+      if (props.onSelect != null) {
         this._isChanging = true
-        t.props.onSelect(event)
+        props.onSelect(event)
 //        t.props.onSelect(t.props.eventKey)
         this._isChanging = false
       }
@@ -71,8 +72,10 @@ object Nav /* mixins: BootstrapMixin with CollapsableMixin*/ {
     }
 
     def handleOptionSelect(event: ReactEvent): Unit = {
-      if (t.props.onSelect != null) {
-        t.props.onSelect(event)
+      val props = t.props.runNow()
+
+      if (props.onSelect != null) {
+        props.onSelect(event)
       }
       //      this.setDropdownState(false)
       t.modState(s => s.copy(expanded = false))
@@ -83,9 +86,9 @@ object Nav /* mixins: BootstrapMixin with CollapsableMixin*/ {
   val component = ReactComponentB[Props]("Nav")
     .initialState(State())
     .backend(new Backend(_))
-    .render(
-      (P, C, S, B) => {
-
+    .renderPCS(
+      (scope, P, C, S) => {
+        val B = scope.backend
         println(s"Navbar In")
 
         def isExpanded: Boolean = {

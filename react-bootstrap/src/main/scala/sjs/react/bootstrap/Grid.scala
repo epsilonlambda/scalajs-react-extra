@@ -10,8 +10,8 @@ object Grid /* mixins: */ {
 
 
   val component = ReactComponentB[Props]("Grid")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (_, P, C) => {
         val className = if (P.fluid) "container-fluid" else "container"
         <.div(^.cls := P.className, ^.cls := className, C)
       }

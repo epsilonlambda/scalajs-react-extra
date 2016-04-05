@@ -17,7 +17,8 @@ object Col /* mixins: */ {
   val component = ReactComponentB[Props]("Col")
     .initialState(State())
     .backend(new Backend(_))
-    .render((P, C, S, B) => {
+    .renderPCS((scope, P, C, S) => {
+      var B = scope.backend
     //    var ComponentClass = P.componentClass
     var classes = Map.empty[String, Boolean]
 

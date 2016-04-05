@@ -13,8 +13,8 @@ object ListGroup /* mixins: */ {
 
 
   val component = ReactComponentB[Props]("ListGroup")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (_, P, C) => {
 
         def renderListItem(child: ReactNode, index: Int): ReactElement = {
           val key = if (child.hasOwnProperty("key")) child.asInstanceOf[js.Dynamic].key else index

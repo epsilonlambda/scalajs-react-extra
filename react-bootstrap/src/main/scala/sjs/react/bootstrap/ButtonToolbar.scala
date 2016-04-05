@@ -10,8 +10,8 @@ import japgolly.scalajs.react.vdom.prefix_<^._
 object ButtonToolbar /* mixins: BootstrapMixin*/ {
 
   val component = ReactComponentB[Props]("ButtonToolbar")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (scope, P, C) => {
         <.div(^.role := "toolbar", ^.classSet1M(P.className, P.getBsClassSet), C)
       }
     )

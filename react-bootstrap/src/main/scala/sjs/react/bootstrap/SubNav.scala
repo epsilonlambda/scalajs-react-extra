@@ -14,11 +14,13 @@ object SubNav /* mixins: BootstrapMixin*/ {
   case class State()
 
   class Backend(t: BackendScope[Props, State]) {
-    def handleClick(event: ReactEvent) {
-      if (t.props.onSelect != null) {
+    def handleClick(event: ReactEvent) = CallbackTo[Unit] {
+      val props = t.props.runNow()
+
+      if (props.onSelect != null) {
         event.preventDefault()
-        if (!t.props.disabled) {
-          t.props.onSelect(t.props.eventKey, t.props.href, t.props.target)
+        if (!props.disabled) {
+          props.onSelect(props.eventKey, props.href, props.target)
         }
       }
     }
@@ -27,7 +29,8 @@ object SubNav /* mixins: BootstrapMixin*/ {
   val component = ReactComponentB[Props]("SubNav")
     .initialState(State())
     .backend(new Backend(_))
-    .render((P, C, S, B) => {
+    .renderPCS((scope, P, C, S) => {
+      val B = scope.backend
 //    def isActive: Boolean = isChildActive(C)
 
     def isChildActive(child: ReactElement): Boolean = {

@@ -64,20 +64,19 @@ object Modal /* mixins: BootstrapMixin with FadeMixin*/ {
     //      }
     //    }
 
-    def dismiss(e: ReactEvent = null): Unit = {
+    def dismiss(e: ReactEvent = null) = CallbackTo[Unit] {
 
     }
 
-    def handleBackdropClick(e: ReactEvent): Unit = {
-      if (e.target != e.currentTarget) {
-        return
-      }
-      t.props.onRequestHide(e)
+    def handleBackdropClick(e: ReactEvent) = CallbackTo[Unit] {
+      if (e.target == e.currentTarget)
+        t.props.runNow().onRequestHide(e)
     }
 
-    def handleDocumentKeyUp(e: ReactKeyboardEvent) {
-      if (t.props.keyboard && e.key(0) == 27) {
-        t.props.onRequestHide(e)
+    def handleDocumentKeyUp(e: ReactKeyboardEvent) = CallbackTo[Unit]{
+      val props = t.props.runNow()
+      if (props.keyboard && e.key(0) == 27) {
+        props.onRequestHide(e)
       }
     }
 
@@ -92,13 +91,13 @@ object Modal /* mixins: BootstrapMixin with FadeMixin*/ {
     override val listeners: List[(String, js.Function1[Event, _])] = List((Events.KEYUP, handleWindowKeyUp))
 
   }
-
+ 
   val component = ReactComponentB[Props]("Modal")
     .initialState(State(true))
     .backend(new Backend(_))
-    .render(
-      (P, C, S, B) => {
-
+    .renderPCS(
+      (scope, P, C, S) => {
+        val B = scope.backend
 
         def renderTitle: TagMod = {
           if (React.isValidElement(P.title) && P.title != null)
@@ -139,7 +138,7 @@ object Modal /* mixins: BootstrapMixin with FadeMixin*/ {
         val classes = Map("modal" -> true, "fade" -> P.animation, "in" -> (!P.animation /*|| !dom.document.querySelectorAll*/))
         val modal = <.div(^.classSet1M(P.className, classes), ^.tabIndex := "-1",
           ^.role := "dialog", P.style.displayBlock,
-          ^.onClick ==> handleBackdropClick,
+          ^.onClick ==> B.handleBackdropClick,
           ^.ref := "modal",
           <.div(^.classSetM(dialogClasses),
             <.div(^.className := "modal-content", if (P.title != null) renderHeader else EmptyTag,
@@ -149,16 +148,18 @@ object Modal /* mixins: BootstrapMixin with FadeMixin*/ {
 
         if (P.backdrop) renderBackdrop(modal) else modal
       }
-    ).componentDidUpdate(
-      (scope, prevProps, prevS) => {
-        if (scope.props.backdrop && scope.props.backdrop != prevProps.backdrop) {
-          scope.backend.iosClickHack()
+    ).componentDidUpdate(args =>
+        CallbackTo[Unit] {
+              val props = args.currentProps
+              val prevProps = args.prevProps
+              val backend = args.component.backend
+              if (props.backdrop && props.backdrop != prevProps.backdrop) {
+                backend.iosClickHack()
+              }
         }
-      }
     )
     //    .componentWillMount(_.backend.init())
     //    .configure(OnUnmount.install)
     .configure(WindowListeners.mixin)
     .build
-
 }

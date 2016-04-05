@@ -22,9 +22,10 @@ object Button {
 
   class Backend(t: BackendScope[Props, State]) {
 
-    def onClick(event: ReactEvent) {
-      if(t.props.onClick!=null)
-        t.props.onClick(event)
+    def onClick(event: ReactEvent) = CallbackTo[Unit] {
+      var props = t.props.runNow()
+      if(props.onClick!=null)
+          props.onClick(event)
     }
   }
 
@@ -34,7 +35,8 @@ object Button {
   val component = ReactComponentB[Props]("Button")
     .initialState(State())
     .backend(new Backend(_))
-    .render((P, C, S, B) => {
+    .renderPC((scope, P, C) => {
+      var B = scope.backend;
     var classes: Map[String, Boolean] = if (P.navDropdown) Map() else P.getBsClassSet
 
     classes +=("active" -> P.active, "btn-block" -> P.block)

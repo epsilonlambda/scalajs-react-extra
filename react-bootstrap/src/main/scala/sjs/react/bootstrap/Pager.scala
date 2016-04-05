@@ -13,8 +13,8 @@ object Pager /* mixins: */ {
 
 
   val component = ReactComponentB[Props]("Pager")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (_, P, C) => {
         def renderPageItem(child: ReactNode, index: Int): ReactElement = {
           val key=if (child.hasOwnProperty("key")) child.asInstanceOf[js.Dynamic].key else index
           val props:Map[String, Any]=Map(

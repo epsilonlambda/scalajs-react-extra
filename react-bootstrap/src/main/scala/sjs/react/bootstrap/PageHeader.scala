@@ -11,7 +11,7 @@ object PageHeader /* mixins: */ {
 
 
   val component = ReactComponentB[Props]("PageHeader")
-    .render((P, C) => {
+    .renderPC((_, P, C) => {
     <.div(^.cls := P.className, ^.cls := "page-header", <.h1(C))
   }
     )

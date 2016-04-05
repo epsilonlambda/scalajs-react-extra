@@ -17,7 +17,7 @@ object Input {
   val component = ReactComponentB[Props]("Input")
     .initialState(State())
     .backend(new Backend(_))
-    .render((P, C, S, B) => {
+    .renderPCS((_, P, C, S) => {
 
     def isCheckboxOrRadio: Boolean = P.`type` == "radio" || P.`type` == "checkbox"
 
@@ -125,7 +125,7 @@ object Input {
   /*
 
   */
-  /*
+ /*
     def getValue(
       function() {
         if (P.`type` === "static")

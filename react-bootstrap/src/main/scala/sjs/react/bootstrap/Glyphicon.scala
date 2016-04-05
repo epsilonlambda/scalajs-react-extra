@@ -10,8 +10,8 @@ import japgolly.scalajs.react.vdom.prefix_<^._
 object Glyphicon /* mixins: BootstrapMixin*/ {
 
   val component = ReactComponentB[Props]("Glyphicon")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (scope, P, C) => {
         var classes = P.getBsClassSet
         classes += ("glyphicon-" + P.glyph -> true)
         <.span(^.cls := P.className, ^.classSetM(classes), C)

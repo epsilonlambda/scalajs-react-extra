@@ -11,7 +11,7 @@ object Table /* mixins: */ {
 
 
   val component = ReactComponentB[Props]("Table")
-    .render((P, C) => {
+    .renderPC((_, P, C) => {
     val classes = Map(
       "table" -> true, "table-striped" -> P.striped, "table-bordered" -> P.bordered,
       "table-condensed" -> P.condensed, "table-hover" -> P.hover

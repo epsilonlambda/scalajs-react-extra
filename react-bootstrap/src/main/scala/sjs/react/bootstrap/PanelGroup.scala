@@ -15,26 +15,29 @@ object PanelGroup {
     var isChanging=false
     def handleSelect(key:Any)(event:ReactEvent): Unit ={
       var currKey=key
-      if(t.props.onSelect!=null){
+      val props = t.props.runNow()
+      val state = t.state.runNow()
+
+      if(props.onSelect!=null){
         this.isChanging = true
-        t.props.onSelect(event)
+        props.onSelect(event)
         this.isChanging = false
       }
-      if (t.state.activeKey == currKey)
+      if (state.activeKey == currKey)
       {
         currKey = null
       }
-      t.setState(t.state.copy(activeKey = key))
+      t.setState(state.copy(activeKey = key))
     }
 
   }
 
   val component = ReactComponentB[Props]("PanelGroup")
-    .initialStateP(P => State(activeKey = P.defaultActiveKey))
+    .initialState_P(P => State(activeKey = P.defaultActiveKey))
     .backend(new Backend(_))
-    .render(
-      (P, C, S, B) => {
-
+    .renderPCS(
+      (scope, P, C, S) => {
+        val B = scope.backend
         def renderPanel(child: ReactNode, index: Int): ReactElement = {
 
           def getBSStyle: Any = {
@@ -66,8 +69,8 @@ object PanelGroup {
         val classes = P.getBsClassSet
         <.div(^.classSet1M(P.className, classes) /*,  onSelect: null})*/ , ValidComponentChildren.map(C, renderPanel))
       }
-    ).shouldComponentUpdate((scope, nextP, nextS) => {
-    ! scope.backend.isChanging
+    ).shouldComponentUpdate(args => {
+    ! args.component.backend.isChanging
   })
     .build
 

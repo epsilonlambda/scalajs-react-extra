@@ -11,8 +11,8 @@ object Jumbotron {
 
 
   val component = ReactComponentB[Props]("Jumbotron")
-    .render(
-      (P, C) => {
+    .renderPC(
+      (_, P, C) => {
         <.div(^.cls := P.className, ^.cls := "jumbotron", C)
       }
     )

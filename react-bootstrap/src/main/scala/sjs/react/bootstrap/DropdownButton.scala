@@ -20,9 +20,10 @@ object DropdownButton /* mixins: BootstrapMixin with DropdownStateMixin*/ {
       t.modState(s => s.copy(open = !s.open))
     }
 
-    def handleOptionSelect(event: ReactEvent): Unit = {
-      if (t.props.onSelect != null) {
-        t.props.onSelect(event)
+    def handleOptionSelect(event: ReactEvent) = CallbackTo[Unit] {
+      var props = t.props.runNow();
+      if (props.onSelect != null) {
+        props.onSelect(event)
       }
       //      this.setDropdownState(false)
       t.modState(s => s.copy(open = false))
@@ -32,8 +33,9 @@ object DropdownButton /* mixins: BootstrapMixin with DropdownStateMixin*/ {
   val component = ReactComponentB[Props]("DropdownButton")
     .initialState(State())
     .backend(new Backend(_))
-    .render(
-      (P, C, S, B) => {
+    .renderPCS(
+      (scope, P, C, S) => {
+        var B = scope.backend
         def renderNavItem(children: Seq[ReactNode]):ReactElement = {
           val classes = Map("dropdown" -> true, "open" -> S.open, "dropup" -> P.dropup)
           <.li(^.classSet1M(P.className, classes), children)
