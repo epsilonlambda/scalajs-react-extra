@@ -92,7 +92,7 @@ object Input {
           Button(componentClass = "input", ref = "input", key = "input")()
         case _ =>
           var className = if (isCheckboxOrRadio || isFile) "" else "form-control"
-          <.input(^.className := BootStrapFunctionUtils.joinClasses(P.className, className), ^.ref := "input", ^.key := "input", ^.value := P.value.toString())
+          <.input(^.className := BootStrapFunctionUtils.joinClasses(P.className, className), ^.ref := "input", ^.key := "input", ^.value := P.value.toString(), ^.onChange ==> P.onChange)
       }
     }
 
@@ -173,18 +173,18 @@ object Input {
                     groupClassName: String = "", hasFeedback: Boolean = false, help: ReactElement = null,
                     label: ReactElement = null, labelClassName: String = "", `type`: String = "",
                     wrapperClassName: String = "", className: String = "", value: js.Any = null,
-                    bsSize: String = "", bsClass: String = "") extends BoostrapMixinProps
+                    bsSize: String = "", bsClass: String = "", onChange: ReactEventI => CallbackTo[Unit]) extends BoostrapMixinProps
 
   def apply(id: String = "", bsStyle: String="", bsSize: String = "", bsClass: String = "", addonAfter: ReactElement = null, addonBefore: ReactElement = null,
             buttonAfter: ReactElement = null, buttonBefore: ReactElement = null, disabled: Boolean = false,
             groupClassName: String = "", hasFeedback: Boolean = false, help: ReactElement = null,
             label: ReactElement = null, labelClassName: String = "", `type`: String = "",
-            wrapperClassName: String = "", value: js.Any = null, className: String = "", ref: js.UndefOr[String] = "", key: js.Any = {})(children: ReactNode*) = {
+            wrapperClassName: String = "", value: js.Any = null, className: String = "", ref: js.UndefOr[String] = "", key: js.Any = {}, onChange: ReactEventI => CallbackTo[Unit])(children: ReactNode*) = {
     component.set(key, ref)(Props(id = id, bsStyle = bsStyle, addonAfter = addonAfter, addonBefore = addonBefore,
       buttonAfter = buttonAfter, buttonBefore = buttonBefore, disabled = disabled,
       groupClassName = groupClassName, hasFeedback = hasFeedback, help = help,
       label = label, labelClassName = labelClassName, `type` = `type`,
-      wrapperClassName = wrapperClassName, className = className, value = value, bsSize = bsSize, bsClass = bsClass), children)
+      wrapperClassName = wrapperClassName, className = className, value = value, bsSize = bsSize, bsClass = bsClass, onChange = onChange), children)
   }
 
 }
