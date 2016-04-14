@@ -87,12 +87,12 @@ object Input {
         case "textarea" =>
           <.textarea(^.className := BootStrapFunctionUtils.joinClasses(P.className, "form-control"), ^.ref := "input", ^.key := "input")
         case "static" =>
-          <.p(^.className := BootStrapFunctionUtils.joinClasses(P.className, "form-control-static"), ^.ref := "input", ^.key := "input", P.value)
+          <.p(^.className := BootStrapFunctionUtils.joinClasses(P.className, "form-control-static"), ^.ref := "input", ^.key := "input", P.value.toString())
         case "submit" =>
           Button(componentClass = "input", ref = "input", key = "input")()
         case _ =>
           var className = if (isCheckboxOrRadio || isFile) "" else "form-control"
-          <.input(^.className := BootStrapFunctionUtils.joinClasses(P.className, className), ^.ref := "input", ^.key := "input")
+          <.input(^.className := BootStrapFunctionUtils.joinClasses(P.className, className), ^.ref := "input", ^.key := "input", ^.value := P.value.toString())
       }
     }
 
@@ -172,14 +172,14 @@ object Input {
                     buttonAfter: ReactElement = null, buttonBefore: ReactElement = null, disabled: Boolean = false,
                     groupClassName: String = "", hasFeedback: Boolean = false, help: ReactElement = null,
                     label: ReactElement = null, labelClassName: String = "", `type`: String = "",
-                    wrapperClassName: String = "", className: String = "", value: ReactElement = null,
+                    wrapperClassName: String = "", className: String = "", value: js.Any = null,
                     bsSize: String = "", bsClass: String = "") extends BoostrapMixinProps
 
   def apply(id: String = "", bsStyle: String="", bsSize: String = "", bsClass: String = "", addonAfter: ReactElement = null, addonBefore: ReactElement = null,
             buttonAfter: ReactElement = null, buttonBefore: ReactElement = null, disabled: Boolean = false,
             groupClassName: String = "", hasFeedback: Boolean = false, help: ReactElement = null,
             label: ReactElement = null, labelClassName: String = "", `type`: String = "",
-            wrapperClassName: String = "", value: ReactElement = null, className: String = "", ref: js.UndefOr[String] = "", key: js.Any = {})(children: ReactNode*) = {
+            wrapperClassName: String = "", value: js.Any = null, className: String = "", ref: js.UndefOr[String] = "", key: js.Any = {})(children: ReactNode*) = {
     component.set(key, ref)(Props(id = id, bsStyle = bsStyle, addonAfter = addonAfter, addonBefore = addonBefore,
       buttonAfter = buttonAfter, buttonBefore = buttonBefore, disabled = disabled,
       groupClassName = groupClassName, hasFeedback = hasFeedback, help = help,
